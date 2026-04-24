@@ -11,12 +11,18 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/taskmanager', {
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:27017/taskmanager';
+
+mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.log(err));
+.then(() => console.log('✅ MongoDB connected'))
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1);
+});
 
 // Task Schema
 const taskSchema = new mongoose.Schema({
@@ -29,7 +35,22 @@ const taskSchema = new mongoose.Schema({
 const Task = mongoose.model('Task', taskSchema);
 
 // Routes
+// ✅ Health check route (ADD THIS)
+app.get('/', (req, res) => {
+  res.send('Backend is running 🚀');
+});
+
 app.get('/api/tasks', async (req, res) => {
+  // ✅ Add validation here
+  if (!req.body.title) {
+    return res.status(400).json({ message: "Title is required" });
+  }
+
+  const task = new Task({
+    title: req.body.title,
+    description: req.body.description,
+  });
+
   try {
     const tasks = await Task.find();
     res.json(tasks);
@@ -75,6 +96,11 @@ app.delete('/api/tasks/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
 });
 
 app.listen(PORT, () => {
