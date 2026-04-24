@@ -12,7 +12,7 @@ spec:
       labels:
         app: mongo
     spec:
-      containers:
+    containers:
       - name: mongo
         image: mongo:5.0
         ports:
@@ -20,7 +20,7 @@ spec:
         volumeMounts:
         - name: mongo-storage
           mountPath: /data/db
-      volumes:
+    volumes:
       - name: mongo-storage
         persistentVolumeClaim:
           claimName: mongo-pvc

@@ -12,15 +12,24 @@ spec:
       labels:
         app: backend
     spec:
-      serviceAccountName: task-manager-sa
       containers:
       - name: backend
         image: task-manager-backend:latest
         ports:
         - containerPort: 5000
+
         env:
         - name: MONGO_URI
           value: "mongodb://mongo:27017/taskmanager"
+
+        # ✅ OPTIONAL (remove warning)
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
 
 ---
 apiVersion: v1

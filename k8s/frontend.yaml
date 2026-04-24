@@ -12,15 +12,19 @@ spec:
       labels:
         app: frontend
     spec:
-      serviceAccountName: task-manager-sa
       containers:
       - name: frontend
-        image: task-manager-frontend:latest
+        image: frontend:latest   # ✅ FIXED image name
         ports:
         - containerPort: 80
-        env:
-        - name: REACT_APP_API_URL
-          value: "http://backend:5000"
+
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+           memory: "128Mi"
+           cpu: "500m"
 
 ---
 apiVersion: v1
@@ -28,9 +32,10 @@ kind: Service
 metadata:
   name: frontend
 spec:
+  type: NodePort   # ✅ CHANGE HERE
   selector:
     app: frontend
   ports:
     - port: 80
       targetPort: 80
-  type: LoadBalancer
+      nodePort: 3001  # ✅ fixed port
