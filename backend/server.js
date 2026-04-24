@@ -41,15 +41,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/tasks', async (req, res) => {
-  // ✅ Add validation here
-  if (!req.body.title) {
-    return res.status(400).json({ message: "Title is required" });
+  try {
+    const tasks = await Task.find();
+    res.status(200).json(tasks);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json([]);
   }
-
-  const task = new Task({
-    title: req.body.title,
-    description: req.body.description,
-  });
+});
 
   try {
     const tasks = await Task.find();
@@ -60,6 +59,14 @@ app.get('/api/tasks', async (req, res) => {
 });
 
 app.post('/api/tasks', async (req, res) => {
+
+  app.post('/api/tasks', async (req, res) => {
+
+  // ✅ CORRECT PLACE
+  if (!req.body.title) {
+    return res.status(400).json({ message: "Title is required" });
+  }
+
   const task = new Task({
     title: req.body.title,
     description: req.body.description,

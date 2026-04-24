@@ -15,10 +15,17 @@ function App() {
  console.log("API URL:", API_URL);
 
   const fetchTasks = async () => {
+  try {
     const response = await fetch(`${API_URL}/api/tasks`);
     const data = await response.json();
-    setTasks(data);
-  };
+
+    // ✅ Safety: ensure always array
+    setTasks(Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    setTasks([]);
+  }
+};
 
   const addTask = async () => {
     if (!title.trim()) return;
@@ -50,14 +57,14 @@ function App() {
     fetchTasks();
   };
 
-  const filteredTasks = tasks.filter(task => {
+  const filteredTasks = (tasks || []).filter(task => {
     if (filter === 'completed') return task.completed;
     if (filter === 'pending') return !task.completed;
     return true;
   });
 
-  const completedCount = tasks.filter(task => task.completed).length;
-  const pendingCount = tasks.length - completedCount;
+  const completedCount = (tasks || []).filter(task => task.completed).length;
+  const pendingCount = (tasks || []).length - completedCount;
 
   return (
     <div className="App">
@@ -111,7 +118,7 @@ function App() {
       </div>
 
       <ul className="task-list">
-        {filteredTasks.map((task) => (
+        {Array.isArray(filteredTasks) && filteredTasks.map((task) => (
           <li key={task._id} className={task.completed ? 'completed' : ''}>
             <div className="task-content">
               <h3>{task.completed ? '✅ ' : '⏳ '}{task.title}</h3>
