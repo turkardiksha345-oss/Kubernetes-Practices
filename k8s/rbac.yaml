@@ -14,6 +14,7 @@ rules:
 - apiGroups: [""]
   resources: ["pods", "services", "endpoints"]
   verbs: ["get", "list", "watch"]
+
 - apiGroups: ["apps"]
   resources: ["deployments", "replicasets"]
   verbs: ["get", "list", "watch"]
@@ -28,6 +29,7 @@ subjects:
 - kind: ServiceAccount
   name: task-manager-sa
   namespace: default
+
 roleRef:
   kind: Role
   name: task-manager-role
