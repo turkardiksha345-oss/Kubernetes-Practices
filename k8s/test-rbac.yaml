@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: test-reader
+  namespace: test
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services"]
+  verbs: ["get", "list"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: test-binding
+  namespace: test   # 👈 binding lives in test
+subjects:
+- kind: ServiceAccount
+  name: task-manager-sa
+  namespace: default   # 👈 SA is still in default
+
+roleRef:
+  kind: Role
+  name: test-reader
+  apiGroup: rbac.authorization.k8s.io
