@@ -12,6 +12,7 @@ function App() {
   }, []);
 
  const API_URL = 'http://16.171.71.131:5000';
+ console.log("API URL:", API_URL);
 
   const fetchTasks = async () => {
     const response = await fetch(`${API_URL}/api/tasks`);
