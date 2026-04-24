@@ -1,19 +1,21 @@
 # Build stage
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
 
 WORKDIR /app
 
 COPY package*.json ./
-
 RUN npm install
 
 COPY . .
-
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
+# ✅ THIS LINE IS CRITICAL
+COPY --from=build /app/build /usr/share/nginx/html
+
+# ✅ custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
