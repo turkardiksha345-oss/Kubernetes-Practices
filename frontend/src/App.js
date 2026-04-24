@@ -11,7 +11,7 @@ function App() {
     fetchTasks();
   }, []);
 
- const API_URL = process.env.REACT_APP_API_URL || 'http://16.171.71.131:5000';
+ const API_URL = 'http://16.171.71.131:5000';
 
   const fetchTasks = async () => {
     const response = await fetch(`${API_URL}/api/tasks`);
