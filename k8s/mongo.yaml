@@ -11,8 +11,8 @@ spec:
     metadata:
       labels:
         app: mongo
-    spec:
-    containers:
+    spec:   # ✅ VERY IMPORTANT
+      containers:
       - name: mongo
         image: mongo:5.0
         ports:
@@ -20,22 +20,10 @@ spec:
         volumeMounts:
         - name: mongo-storage
           mountPath: /data/db
-    volumes:
+      volumes:
       - name: mongo-storage
         persistentVolumeClaim:
           claimName: mongo-pvc
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mongo-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
 
 ---
 apiVersion: v1
@@ -48,3 +36,15 @@ spec:
   ports:
     - port: 27017
       targetPort: 27017
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
