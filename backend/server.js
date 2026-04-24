@@ -35,11 +35,13 @@ const taskSchema = new mongoose.Schema({
 const Task = mongoose.model('Task', taskSchema);
 
 // Routes
-// ✅ Health check route (ADD THIS)
+
+// ✅ Health check
 app.get('/', (req, res) => {
   res.send('Backend is running 🚀');
 });
 
+// ✅ GET all tasks
 app.get('/api/tasks', async (req, res) => {
   try {
     const tasks = await Task.find();
@@ -50,19 +52,10 @@ app.get('/api/tasks', async (req, res) => {
   }
 });
 
-  try {
-    const tasks = await Task.find();
-    res.json(tasks);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
+// ✅ CREATE task
 app.post('/api/tasks', async (req, res) => {
 
-  app.post('/api/tasks', async (req, res) => {
-
-  // ✅ CORRECT PLACE
+  // validation
   if (!req.body.title) {
     return res.status(400).json({ message: "Title is required" });
   }
@@ -71,6 +64,7 @@ app.post('/api/tasks', async (req, res) => {
     title: req.body.title,
     description: req.body.description,
   });
+
   try {
     const newTask = await task.save();
     res.status(201).json(newTask);
@@ -79,6 +73,7 @@ app.post('/api/tasks', async (req, res) => {
   }
 });
 
+// ✅ UPDATE task
 app.put('/api/tasks/:id', async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -86,7 +81,8 @@ app.put('/api/tasks/:id', async (req, res) => {
 
     task.title = req.body.title || task.title;
     task.description = req.body.description || task.description;
-    task.completed = req.body.completed !== undefined ? req.body.completed : task.completed;
+    task.completed =
+      req.body.completed !== undefined ? req.body.completed : task.completed;
 
     const updatedTask = await task.save();
     res.json(updatedTask);
@@ -95,10 +91,12 @@ app.put('/api/tasks/:id', async (req, res) => {
   }
 });
 
+// ✅ DELETE task
 app.delete('/api/tasks/:id', async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
     if (!task) return res.status(404).json({ message: 'Task not found' });
+
     res.json({ message: 'Task deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -106,10 +104,11 @@ app.delete('/api/tasks/:id', async (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!');
+   console.error(err.stack);
+    res.status(500).send('Something went wrong!'); 
 });
 
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  console.log(`Server is running on port ${PORT}`);
+}); 
